@@ -14,13 +14,13 @@ namespace Fliptris {
     {
       public:
         Game(int nlines, int ncols, int y, int x);
+        virtual void set_listeners(vector<GameListener> listeners) { };
         void Draw();
         int add(ncurses::Renderable* block);
         void pause();
         bool is_valid(ncurses::Renderable* block);
         int on_kbhit(int key);
         struct timespec get_delay();
-        virtual void set_listeners(vector<GameListener> listeners);
 
       protected:
         int x, y;

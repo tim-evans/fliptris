@@ -22,10 +22,6 @@ Window::Game::Game(int nlines, int ncols, int y, int x)
   this->x = 7;
   this->y = 0;
   this->level = 1;
-  this->next = new Fliptris::Window::Next(14, 12, 7, COLS / 2 + 5);
-  this->block = this->next.next();
-  this->block->curs_to(0, 7);
-  this->Paint(this->block);
 }
 
 void Window::Game::pause()
@@ -123,7 +119,7 @@ int Window::Game::on_kbhit(int key)
       break;
     default:
       break;
-//      this->_on_kbhit(key);
+      this->on_key_hit(key);
   }
 
   int cleared = 0;
