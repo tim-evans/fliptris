@@ -1,11 +1,43 @@
+//--------------------------------------------------------------
+// Fliptris
+// ========
+//  The buffer to draw static elements in the playing board.
+//--------------------------------------------------------------
+// Copyright (c) 2010 Tim Evans
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//--------------------------------------------------------------
 #include "buffer.h"
 
 using namespace Fliptris;
 
-/**
- * Clear a line from the buffer
- */
-void Buffer::clear_line(int line)
+//--------------------------------------------------------------
+// Clear Line
+//  Clear a line from the buffer (a line has been cleared)
+//  Input:
+//    line      | the line to clear.
+//--------------------------------------------------------------
+void
+Buffer::clear_line(int line)
 {
   std::pair <std::multimap <int, std::pair <int, int> >::iterator,
              std::multimap <int, std::pair <int, int> >::iterator> ret;
@@ -18,21 +50,32 @@ void Buffer::clear_line(int line)
   this->lines.erase(line);
 }
 
-/**
- * Insert a single entry into the buffer
- */
-void Buffer::insert(int y, int x, int color)
+//--------------------------------------------------------------
+// Insert
+//  Insert a single entry into the buffer
+//  Input:
+//    y       | the y position of the thing to insert
+//    x       | the x position of the thing to insert
+//    color   | the color of the block
+//--------------------------------------------------------------
+void
+Buffer::insert(int y, int x, int color)
 {
   std::pair<int, int> coord(y, x);
   this->buffer[coord] = color;
   this->lines.insert(std::pair <int, std::pair <int, int> >(y, coord));
 }
 
-/**
- * Insert multiple entries into the buffer
- */
-void Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin, 
-                    std::map <std::pair <int, int>, int>::iterator end) {
+//--------------------------------------------------------------
+// Insert
+//  Insert multiple entries into the buffer
+//  Input:
+//    begin   | the iterator at the beginning
+//    end     | the iterator at the end
+//--------------------------------------------------------------
+void
+Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin, 
+               std::map <std::pair <int, int>, int>::iterator end) {
   this->buffer.insert(begin, end);
 
   for (begin; begin != end; ++begin) {
@@ -40,33 +83,47 @@ void Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin,
   }
 }
 
-int Buffer::count(int line)
+//--------------------------------------------------------------
+// Count
+//  The number of elements in the specified line.
+//  Input:
+//    line    | the line to check.
+//--------------------------------------------------------------
+int
+Buffer::count(int line)
 {
   return this->lines.count(line);
 }
 
-/**
- * Returns the current (painted) state of the Buffer
- */
-std::map <std::pair <int, int>, int> Buffer::points()
+//--------------------------------------------------------------
+// Points
+//  Returns the current (painted) state of the Buffer
+//--------------------------------------------------------------
+std::map <std::pair <int, int>, int>
+Buffer::points()
 {
   return this->last_buffer;
 }
 
-/**
- * Returns the new state of the Buffer
- */
-std::map <std::pair <int, int>, int> Buffer::new_points()
+//--------------------------------------------------------------
+// New Points
+//  Returns the new state of the Buffer (undrawn).
+//--------------------------------------------------------------
+std::map <std::pair <int, int>, int>
+Buffer::new_points()
 {
   return this->buffer;
 }
 
-/**
- * Called when the Buffer is Painted,
- * renders the buffer to the window and 
- * updates the current state
- */
-void Buffer::render(ncurses::Window* win)
+//--------------------------------------------------------------
+// Render
+//  Called when the Buffer is Painted, renders the buffer to
+// the window and updates the current state.
+//  Input:
+//    win     | the window to render the buffer in
+//--------------------------------------------------------------
+void
+Buffer::render(ncurses::Window* win)
 {
   std::map <std::pair <int, int>, int>::iterator iter;
   for (iter = this->buffer.begin(); iter != this->buffer.end(); ++iter) {
@@ -79,10 +136,12 @@ void Buffer::render(ncurses::Window* win)
   this->last_buffer = this->buffer;
 }
 
-/**
- * Rollback the buffer to the last state that was valid
- */
-void Buffer::rollback()
+//--------------------------------------------------------------
+// Rollback
+//  Rollback the buffer to the last state that was valid.
+//--------------------------------------------------------------
+void
+Buffer::rollback()
 {
   this->lines = this->last_lines;
   this->buffer = this->last_buffer;

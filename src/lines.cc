@@ -54,7 +54,8 @@ Window::Lines::Lines(int nlines, int ncols, int y, int x)
 //    lines     | the number of lines to add that have been
 //              | cleared
 //--------------------------------------------------------------
-void Window::Lines::add(int lines)
+void
+Window::Lines::add(int lines)
 {
   this->lines += lines;
   this->Draw();
@@ -65,7 +66,8 @@ void Window::Lines::add(int lines)
 // Draw
 //  Redraw the window as if everything went wrong.
 //--------------------------------------------------------------
-void Window::Lines::Draw()
+void
+Window::Lines::Draw()
 {
   this->Box(0, 0);
   this->Attron(A_BOLD);
