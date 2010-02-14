@@ -20,6 +20,7 @@ namespace Fliptris {
         bool is_valid(ncurses::Renderable* block);
         int on_kbhit(int key);
         struct timespec get_delay();
+        virtual void set_listeners(vector<GameListener> listeners);
 
       protected:
         int x, y;
@@ -27,8 +28,9 @@ namespace Fliptris {
         Fliptris::Window::Next* next;
         Tetrimino* block;
         //virtual bool rules(Tetrimino* block) { };
-        //virtual void _on_kbhit(int key) { };
+        virtual void on_key_hit(int key) { };
         Buffer buffer;
+        multimap<int, void *> key_lookup;
     };
   }
 }
