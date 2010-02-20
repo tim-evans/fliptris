@@ -36,14 +36,12 @@ using namespace ncurses;
 // at the location begin_y, begin_x. Has to be called by every
 // implementing Window class.
 //--------------------------------------------------------------
-void
-Window::Newwin(int nlines, int ncols, int begin_y, int begin_x)
-{
-  this->lines = nlines;
-  this->cols = ncols;
-  this->x = begin_x;
-  this->y = begin_y;
-  this->win = newwin(nlines, ncols, begin_y, begin_x);
+void Window::Newwin(int nlines, int ncols, int begin_y, int begin_x) {
+  this->lines_ = nlines;
+  this->cols_ = ncols;
+  this->x_ = begin_x;
+  this->y_ = begin_y;
+  this->win_ = newwin(nlines, ncols, begin_y, begin_x);
 }
 
 //--------------------------------------------------------------
@@ -55,8 +53,7 @@ Window::Newwin(int nlines, int ncols, int begin_y, int begin_x)
 //    begin_y   | the y position of the window
 //    begin_x   | the x position of the window
 //--------------------------------------------------------------
-Window::Window(int nlines, int ncols, int begin_y, int begin_x)
-{
+Window::Window(int nlines, int ncols, int begin_y, int begin_x) {
   this->Newwin(nlines, ncols, begin_y, begin_x);
 }
 
@@ -64,11 +61,10 @@ Window::Window(int nlines, int ncols, int begin_y, int begin_x)
 // ~Window
 //  Delete this window from the screen.
 //--------------------------------------------------------------
-Window::~Window()
-{
+Window::~Window() {
   this->Border();
   this->Refresh();
-  delwin(this->win);
+  delwin(this->win_);
 }
 
 //--------------------------------------------------------------
@@ -78,10 +74,8 @@ Window::~Window()
 //  Input:
 //    attr    | the attribute to turn off.
 //--------------------------------------------------------------
-void
-Window::Attroff(int attr)
-{
-  wattroff(this->win, attr);
+void Window::Attroff(int attr) {
+  wattroff(this->win_, attr);
 }
 
 //--------------------------------------------------------------
@@ -115,10 +109,8 @@ Window::Attroff(int attr)
 //            | COLOR_PAIR(n)
 //            |   Color-pair number n
 //--------------------------------------------------------------
-void
-Window::Attron(int attr)
-{
-  wattron(this->win, attr);
+void Window::Attron(int attr) {
+  wattron(this->win_, attr);
 }
 
 //--------------------------------------------------------------
@@ -135,11 +127,9 @@ Window::Attron(int attr)
 //    bl      | bottom left-hand corner character
 //    br      | bottom right-hand corner character
 //--------------------------------------------------------------
-void
-Window::Border(char ls, char rs, char ts, char bs,
-               char tl, char tr, char bl, char br)
-{
-  wborder(this->win, ls, rs, ts, bs, tl, tr, bl, br);
+void Window::Border(char ls, char rs, char ts, char bs,
+                    char tl, char tr, char bl, char br) {
+  wborder(this->win_, ls, rs, ts, bs, tl, tr, bl, br);
 }
 
 //--------------------------------------------------------------
@@ -150,20 +140,16 @@ Window::Border(char ls, char rs, char ts, char bs,
 //    vertch    | the vertical character
 //    horch     | the horizontal character
 //--------------------------------------------------------------
-void
-Window::Box(int vertch, int horch)
-{
-  box(this->win, vertch, horch);
+void Window::Box(int vertch, int horch) {
+  box(this->win_, vertch, horch);
 }
 
 //--------------------------------------------------------------
 // Clear
-//  Clearthe window completely
+//  Clear the window completely
 //--------------------------------------------------------------
-void
-Window::Clear()
-{
-  wclear(this->win);
+void Window::Clear() {
+  wclear(this->win_);
 }
 
 //--------------------------------------------------------------
@@ -173,9 +159,7 @@ Window::Clear()
 //  Input:
 //    object    | the object to erase
 //--------------------------------------------------------------
-void
-Window::Erase(ncurses::Renderable* object) 
-{
+void Window::Erase(ncurses::Renderable* object) {
   std::map <std::pair <int, int>, int> points = object->points();
   std::map <std::pair <int, int>, int>::iterator iter;
   
@@ -198,20 +182,16 @@ Window::Erase(ncurses::Renderable* object)
 //    attr      | the attribute to change to
 //    color     | the color to change to
 //--------------------------------------------------------------
-void
-Window::Mvchgat(int y, int x, int num, short attr, short color)
-{
-  mvwchgat(this->win, y, x, num, attr, color, NULL);
+void Window::Mvchgat(int y, int x, int num, short attr, short color) {
+  mvwchgat(this->win_, y, x, num, attr, color, NULL);
 }
 
 //--------------------------------------------------------------
 // IsDirty?
 //  Returns whether there was any changes made to the terminal.
 //--------------------------------------------------------------
-bool
-Window::IsDirty()
-{
-  return this->dirty;
+bool Window::is_dirty() {
+  return this->dirty_;
 }
 
 //--------------------------------------------------------------
@@ -221,10 +201,8 @@ Window::IsDirty()
 //    y       | the y location to move to
 //    x       | the x location to move to
 //--------------------------------------------------------------
-void
-Window::Move(int y, int x)
-{
-  this->Resize(this->lines, this->cols, y, x);
+void Window::Move(int y, int x) {
+  this->Resize(this->lines_, this->cols_, y, x);
 }
 
 //--------------------------------------------------------------
@@ -233,9 +211,7 @@ Window::Move(int y, int x)
 //  Input:
 //    object  | the object to render
 //--------------------------------------------------------------
-void
-Window::Paint(ncurses::Renderable* object)
-{
+void Window::Paint(ncurses::Renderable* object) {
   object->render(this);
 }
 
@@ -247,14 +223,12 @@ Window::Paint(ncurses::Renderable* object)
 //    fmt     | the formatting string
 //    ...     | the argument strings
 //--------------------------------------------------------------
-int
-Window::Printw(const char * fmt, ...)
-{
+int Window::Printw(const char * fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  int result = vw_printw(this->win, fmt, args);
+  int result = vw_printw(this->win_, fmt, args);
   va_end(args);
-  this->dirty = true;
+  this->dirty_ = true;
   return result;
 }
 
@@ -267,12 +241,10 @@ Window::Printw(const char * fmt, ...)
 //    fmt     | the formating string
 //    ...     | the argument strings
 //--------------------------------------------------------------
-int
-Window::Mvprintw(int y, int x, const char * fmt, ... )
-{
+int Window::Mvprintw(int y, int x, const char * fmt, ... ) {
   va_list args;
   va_start(args, fmt);
-  int result = wmove(this->win, y, x);
+  int result = wmove(this->win_, y, x);
   if (result == OK) {
     result = vw_printw(this->win, fmt, args);
   }
@@ -285,9 +257,7 @@ Window::Mvprintw(int y, int x, const char * fmt, ... )
 // Refresh
 //  Refresh the contents of the window
 //--------------------------------------------------------------
-void
-Window::Refresh()
-{
+void Window::Refresh() {
   wrefresh(this->win);
   this->dirty = false;
 }
@@ -302,17 +272,15 @@ Window::Refresh()
 //    y         | the y position to move the window to
 //    x         | the x position to move the window to
 //--------------------------------------------------------------
-void
-Window::Resize(int nlines, int ncols, int y, int x)
-{
+void Window::Resize(int nlines, int ncols, int y, int x) {
   this->Border();
   this->Refresh();
-  delwin(this->win);
-  this->win = newwin(nlines, ncols, y, x);
-  this->lines = nlines;
-  this->cols = ncols;
-  this->y = y;
-  this->x = x;
+  delwin(this->win_);
+  this->win_ = newwin(nlines, ncols, y, x);
+  this->lines_ = nlines;
+  this->cols_ = ncols;
+  this->y_ = y;
+  this->x_ = x;
 
   this->Draw();
   this->Refresh();
@@ -322,38 +290,30 @@ Window::Resize(int nlines, int ncols, int y, int x)
 // Width
 //  Return the current width of the window.
 //--------------------------------------------------------------
-int
-Window::Width()
-{
-  return this->cols;
+int Window::width() {
+  return this->cols_;
 }
 
 //--------------------------------------------------------------
 // Height
 //  Return the current height of the window.
 //--------------------------------------------------------------
-int
-Window::Height()
-{
-  return this->lines;
+int Window::height() {
+  return this->lines_;
 }
 
 //--------------------------------------------------------------
 // X
 //  Return the current x position
 //--------------------------------------------------------------
-int
-Window::X()
-{
-  return getmaxx(this->win);
+int Window::x() {
+  return getmaxx(this->win_);
 }
 
 //--------------------------------------------------------------
 // Y
 //  Return the current y position
 //--------------------------------------------------------------
-int
-Window::Y()
-{
-  return getmaxy(this->win);
+int Window::y() {
+  return getmaxy(this->win_);
 }

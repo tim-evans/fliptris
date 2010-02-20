@@ -34,81 +34,100 @@
 #include <ncurses.h>
 
 namespace ncurses {
-  class Renderable;
 
-  class Window
-  {
-    public:
-      Window(int nlines, int ncols, int y, int x);
-      ~Window();
+class Renderable;
 
-      void Attroff(int attr);
-      void Attron(int attr);
-      void Border(char ls=' ', char rs=' ', char ts=' ', char bs=' ',
-                  char tl=' ', char tr=' ', char bl=' ', char br=' ');
-      void Box(int vertch, int horch);
-      void Clear();
-      void Mvchgat(int y, int x, int num, short attr, short color);
-      void Move(int y, int x);
-      void Erase(Renderable* object);
-      void Paint(Renderable* object);
-      int Printw(const char * format, ...);
-      int Mvprintw(int y, int x, const char * format, ...);
-      void Refresh();
-      void Resize(int nlines, int ncols, int begin_y, int begin_x);
-      int Y();
-      int X();
-      int Width();
-      int Height();
-  
-      virtual void Draw() { };
+class Window {
+ public:
+  Window(int nlines, int ncols, int y, int x);
+  ~Window();
 
-    protected:
-      Window(void) { };
-      void Newwin(int nlines, int ncols, int begin_y, int begin_x);
+  void Attroff(int attr);
+  void Attron(int attr);
+  void Border(char ls=' ', char rs=' ', char ts=' ', char bs=' ',
+              char tl=' ', char tr=' ', char bl=' ', char br=' ');
+  void Box(int vertch, int horch);
+  void Clear();
+  void Mvchgat(int y, int x, int num, short attr, short color);
+  void Move(int y, int x);
+  void Erase(Renderable* object);
+  void Paint(Renderable* object);
+  int Printw(const char * format, ...);
+  int Mvprintw(int y, int x, const char * format, ...);
+  void Refresh();
+  void Resize(int nlines, int ncols, int begin_y, int begin_x);
+  int y();
+  int x();
+  int width();
+  int height();
 
-    private:
-      WINDOW* win;
-      bool dirty;
-      int lines, cols, y, x;
+  virtual void Draw() { };
+
+ protected:
+  Window(void) { };
+  void Newwin(int nlines, int ncols, int begin_y, int begin_x);
+
+ private:
+  WINDOW* win_;
+  bool dirty_;
+  int lines_, cols_, y_, x_;
+};
+
+// Renderable class
+class Renderable {
+ public:
+  // Returns a vector of all of the coordinates
+  // that the object is currently occupying, with
+  // their associated color
+  virtual std::map < std::pair <int, int>, int> points() { };
+
+  // Returns a vector of all of the coordinates
+  // the object will occupy on the next render
+  virtual std::map < std::pair <int, int>, int> new_points() { };
+
+  // Move the object's cursor to y, x
+  void curs_to(int y, int x) { 
+    this->y_ = y;
+    this->x_ = x;
   };
 
-  // Renderable class
-  class Renderable {
-    public:
-      // Returns a vector of all of the coordinates
-      // that the object is currently occupying, with
-      // their associated color
-      virtual std::map < std::pair <int, int>, int> points() { };
-  
-      // Returns a vector of all of the coordinates
-      // the object will occupy on the next render
-      virtual std::map < std::pair <int, int>, int> new_points() { };
-
-      // Move the object's cursor to y, x
-      void curs_to(int y, int x) { 
-        this->y = y;
-        this->x = x;
-      };
-
-      std::pair <int, int> curs() { 
-        return std::make_pair(this->y, this->x);
-      };
-
-      // Renders the object to the screen
-      virtual void render(Window* win) { };
-  
-      // Rollback changes made since last render
-      virtual void rollback() { };
-
-    protected:
-      Renderable() { 
-        this->y = 0;
-        this->x = 0;
-      };
-      ~Renderable() { };
-
-      int y, x;
+  std::pair <int, int> curs() { 
+    return std::make_pair(this->y_, this->x_);
   };
+
+  // Renders the object to the screen
+  virtual void Render(Window* win) { };
+  
+  // Rollback changes made since last render
+  virtual void Rollback() { };
+
+  // Getters and setters for coordinates
+  int y() {
+    return this->y_;
+  };
+
+  void y(int y) {
+    this->y_ = y;
+  };
+
+  int x() {
+    return this->x_;
+  };
+
+  void x(int x) {
+    this->x_ = x;
+  };
+
+ protected:
+  Renderable() { 
+    this->y_ = 0;
+    this->x_ = 0;
+  };
+  ~Renderable() { };
+
+  int y_, x_;
+};
+
 }
-#endif
+
+#endif // NCURSES_WINDOW

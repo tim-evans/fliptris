@@ -36,9 +36,7 @@ using namespace Fliptris;
 //  Input:
 //    line      | the line to clear.
 //--------------------------------------------------------------
-void
-Buffer::clear_line(int line)
-{
+void Buffer::clear_line(int line) {
   std::pair <std::multimap <int, std::pair <int, int> >::iterator,
              std::multimap <int, std::pair <int, int> >::iterator> ret;
   std::multimap <int, std::pair <int, int> >::iterator iter;
@@ -58,9 +56,7 @@ Buffer::clear_line(int line)
 //    x       | the x position of the thing to insert
 //    color   | the color of the block
 //--------------------------------------------------------------
-void
-Buffer::insert(int y, int x, int color)
-{
+void Buffer::insert(int y, int x, int color) {
   std::pair<int, int> coord(y, x);
   this->buffer[coord] = color;
   this->lines.insert(std::pair <int, std::pair <int, int> >(y, coord));
@@ -73,9 +69,8 @@ Buffer::insert(int y, int x, int color)
 //    begin   | the iterator at the beginning
 //    end     | the iterator at the end
 //--------------------------------------------------------------
-void
-Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin, 
-               std::map <std::pair <int, int>, int>::iterator end) {
+void Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin, 
+                    std::map <std::pair <int, int>, int>::iterator end) {
   this->buffer.insert(begin, end);
 
   for (begin; begin != end; ++begin) {
@@ -89,9 +84,7 @@ Buffer::insert(std::map <std::pair <int, int>, int>::iterator begin,
 //  Input:
 //    line    | the line to check.
 //--------------------------------------------------------------
-int
-Buffer::count(int line)
-{
+int Buffer::count(int line) {
   return this->lines.count(line);
 }
 
@@ -99,9 +92,7 @@ Buffer::count(int line)
 // Points
 //  Returns the current (painted) state of the Buffer
 //--------------------------------------------------------------
-std::map <std::pair <int, int>, int>
-Buffer::points()
-{
+std::map <std::pair <int, int>, int> Buffer::points() {
   return this->last_buffer;
 }
 
@@ -109,9 +100,7 @@ Buffer::points()
 // New Points
 //  Returns the new state of the Buffer (undrawn).
 //--------------------------------------------------------------
-std::map <std::pair <int, int>, int>
-Buffer::new_points()
-{
+std::map <std::pair <int, int>, int> Buffer::new_points() {
   return this->buffer;
 }
 
@@ -122,9 +111,7 @@ Buffer::new_points()
 //  Input:
 //    win     | the window to render the buffer in
 //--------------------------------------------------------------
-void
-Buffer::render(ncurses::Window* win)
-{
+void Buffer::Render(ncurses::Window* win) {
   std::map <std::pair <int, int>, int>::iterator iter;
   for (iter = this->buffer.begin(); iter != this->buffer.end(); ++iter) {
     win->Attron(COLOR_PAIR((*iter).second + 1) | A_BOLD);
@@ -140,9 +127,7 @@ Buffer::render(ncurses::Window* win)
 // Rollback
 //  Rollback the buffer to the last state that was valid.
 //--------------------------------------------------------------
-void
-Buffer::rollback()
-{
+void Buffer::Rollback() {
   this->lines = this->last_lines;
   this->buffer = this->last_buffer;
 }

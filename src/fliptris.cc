@@ -3,21 +3,32 @@
 using namespace Fliptris;
 
 void
-Fliptris::on_key_down()
+Fliptris::on_key_down(Tetrimino* block)
 {
-  this->y++;
+  block->y(block->y()++);
 }
 
 void
-Fliptris::on_key_up()
+Fliptris::on_key_up(Tetrimino* block)
 {
-  this->block->rotate();
+  block->rotate();
 }
 
+void
+Fliptris::on_key_left(Tetrimino* block)
+{
+  block->x(block->x() - 2);
+}
+
+void
+Fliptris::on_key_right(Tetrimino* block)
+{
+  block->x(block->x() + 2);
+}
 
 Fliptris::Fliptris(int nlines, int ncols, int y, int x)
 {
-  this->Newwin(nlines, ncols, y, x);
+  this->Newwin(nlines, ncols, y, x);  
 
   this->key_lookup.insert(std::pair<int, void*>(KEY_UP, this->on_key_up));
   this->key_lookup.insert(std::pair<int, void*>(KEY_DOWN, this->on_key_down));

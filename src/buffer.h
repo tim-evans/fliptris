@@ -34,26 +34,27 @@
 #include <utility>
 
 namespace Fliptris {
-  class Buffer : public ncurses::Renderable {
-    public:
-      Buffer() { };
 
-      void clear_line(int line);
-      void insert(int y, int x, int color);
-      void insert(std::map <std::pair <int, int>, int>::iterator begin, 
-                  std::map <std::pair <int, int>, int>::iterator end);
-      int count(int line);
+class Buffer : public ncurses::Renderable {
+ public:
+  Buffer() { };
+  void clear_line(int line);
+  void insert(int y, int x, int color);
+  void insert(std::map <std::pair <int, int>, int>::iterator begin, 
+              std::map <std::pair <int, int>, int>::iterator end);
+  int count(int line);
 
-      void render(ncurses::Window* win);
-      void rollback();
+  void Render(ncurses::Window* win);
+  void Rollback();
 
-      std::map <std::pair <int, int>, int> points();
-      std::map <std::pair <int, int>, int> new_points();
+  std::map <std::pair <int, int>, int> points();
+  std::map <std::pair <int, int>, int> new_points();
  
-    private:
-      std::map <std::pair <int, int>, int> buffer, last_buffer;
-      std::multimap <int, std::pair <int, int> > lines, last_lines;
-  };
+ private:
+  std::map <std::pair <int, int>, int> buffer, last_buffer;
+  std::multimap <int, std::pair <int, int> > lines, last_lines;
+};
+
 }
 
-#endif
+#endif // FLIPTRIS_BUFFER

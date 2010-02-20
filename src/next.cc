@@ -39,7 +39,6 @@ using namespace Fliptris;
 //    y         | the y-position of the window
 //    x         | the x-position of the window
 //--------------------------------------------------------------
-Window::Score::Score(int nlines, int ncols, int y, int x)
 Window::Next::Next(int nlines, int ncols, int y, int x)
 {
   this->Newwin(nlines, ncols, y, x);
